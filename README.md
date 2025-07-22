@@ -1,4 +1,19 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Inventory Management Frontend
+
+Frontend aplikasi inventory management menggunakan Next.js, React, dan TypeScript.
+
+## Tech Stack
+- Next.js 15
+- React 18
+- TypeScript
+- Tailwind CSS
+- ESLint
+
+## Installation
+
+```bash
+npm install
+```
 
 ## Getting Started
 

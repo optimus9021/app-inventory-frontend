@@ -1,0 +1,60 @@
+name: Deploy Frontend to DEV
+
+on:
+  push:
+    branches: [ DEV ]
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  deploy:
+    name: Deploy to DEV Server
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Run linting
+      run: npm run lint
+      
+    - name: Build application
+      run: npm run build
+      
+    - name: Deploy to DEV Server
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.DEV_HOST }}
+        username: ${{ secrets.DEV_USERNAME }}
+        key: ${{ secrets.DEV_SSH_KEY }}
+        port: ${{ secrets.DEV_PORT || 22 }}
+        script: |
+          # Navigate to application directory
+          cd ${{ secrets.DEV_APP_PATH || '/app/app-inventory-frontend' }}
+          
+          # Pull latest changes
+          git fetch origin
+          git checkout DEV_Ismail
+          git pull origin DEV_Ismail
+          
+          # Install dependencies
+          npm ci --only=production
+          
+          # Build application
+          npm run build
+          
+          # Restart PM2 process
+          pm2 restart ${{ secrets.DEV_PM2_PROCESS_NAME || 'inventory-fe-dev' }} || pm2 start npm --name "${{ secrets.DEV_PM2_PROCESS_NAME || 'inventory-fe-dev' }}" -- start
+          
+          # Save PM2 configuration
+          pm2 save
+          
+          echo "Deployment completed successfully!"

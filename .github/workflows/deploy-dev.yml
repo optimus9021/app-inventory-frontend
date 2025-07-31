@@ -38,7 +38,7 @@ jobs:
         port: ${{ secrets.DEV_PORT || 22 }}
         script: |
           # Navigate to application directory
-          cd ${{ secrets.DEV_APP_PATH || '/app/app-inventory-frontend' }}
+          cd '/app/app-inventory-frontend'
           
           # Pull latest changes
           git fetch origin
@@ -52,7 +52,7 @@ jobs:
           npm run build
           
           # Restart PM2 process
-          pm2 restart ${{ secrets.DEV_PM2_PROCESS_NAME || 'inventory-fe-dev' }} || pm2 start npm --name "${{ secrets.DEV_PM2_PROCESS_NAME || 'inventory-fe-dev' }}" -- start
+          pm2 restart 'inventory-fe-dev' || pm2 start npm --name 'inventory-fe-dev' -- start
           
           # Save PM2 configuration
           pm2 save

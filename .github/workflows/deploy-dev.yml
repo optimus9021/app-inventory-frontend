@@ -2,7 +2,7 @@ name: Deploy Frontend to DEV
 
 on:
   push:
-    branches: [ DEV ]
+    branches: [ DEV ]  # Changed back to DEV
   workflow_dispatch: # Allow manual trigger
 
 jobs:
@@ -23,8 +23,8 @@ jobs:
     - name: Install dependencies
       run: npm ci
       
-    - name: Run linting
-      run: npm run lint
+    - name: Run linting (if exists)
+      run: npm run lint --if-present
       
     - name: Build application
       run: npm run build
@@ -37,16 +37,16 @@ jobs:
         key: ${{ secrets.DEV_SSH_KEY }}
         port: ${{ secrets.DEV_PORT || 22 }}
         script: |
-          # Navigate to application directory
-          cd '/app/app-inventory-frontend'
+          # Navigate to correct application directory
+          cd '/home/ismail9021/app/app-inventory-frontend'
           
-          # Pull latest changes
+          # Pull latest changes from DEV branch
           git fetch origin
-          git checkout DEV_Ismail
-          git pull origin DEV_Ismail
+          git checkout DEV
+          git pull origin DEV
           
           # Install dependencies
-          npm ci --only=production
+          npm ci --omit=dev
           
           # Build application
           npm run build
@@ -58,3 +58,4 @@ jobs:
           pm2 save
           
           echo "Deployment completed successfully!"
+          pm2 list

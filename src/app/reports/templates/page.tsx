@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { Layout } from '@/components/layout/Layout';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -343,7 +342,7 @@ export default function ReportTemplatesPage() {
   const favoriteTemplates = templates.filter(t => t.isFavorite).length;
 
   return (
-    <Layout>
+    
       <div className="space-y-6">
         {/* Header */}
         <div className="flex justify-between items-center">
@@ -693,6 +692,6 @@ export default function ReportTemplatesPage() {
           </TabsContent>
         </Tabs>
       </div>
-    </Layout>
+    
   );
 }

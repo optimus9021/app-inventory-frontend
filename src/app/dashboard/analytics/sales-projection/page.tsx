@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { Layout } from '@/components/layout/Layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -82,7 +81,7 @@ export default function SalesProjectionPage() {
   const [selectedTimeframe, setSelectedTimeframe] = useState('quarterly');
 
   return (
-    <Layout>
+    
       <div className="space-y-6">
         {/* Page Header */}
         <div className="flex items-center justify-between">
@@ -294,6 +293,6 @@ export default function SalesProjectionPage() {
           </CardContent>
         </Card>
       </div>
-    </Layout>
+    
   );
 }

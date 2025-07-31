@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Layout } from '@/components/layout/Layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -193,7 +192,7 @@ export default function TargetRecapPage() {
 
   if (loading) {
     return (
-      <Layout>
+      
         <div className="p-6">
           <div className="animate-pulse space-y-6">
             {[...Array(4)].map((_, i) => (
@@ -201,12 +200,12 @@ export default function TargetRecapPage() {
             ))}
           </div>
         </div>
-      </Layout>
+      
     );
   }
 
   return (
-    <Layout>
+    
       <div className="p-6">
         {/* Header */}
         <div className="mb-6">
@@ -429,6 +428,6 @@ export default function TargetRecapPage() {
           </CardContent>
         </Card>
       </div>
-    </Layout>
+    
   );
 }

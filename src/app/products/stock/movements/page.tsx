@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Layout } from '@/components/layout/Layout';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -208,7 +207,7 @@ export default function StockMovementsPage() {
     .filter(m => m.movementType === 'adjustment').length;
 
   return (
-    <Layout>
+    
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <div>
@@ -455,6 +454,6 @@ export default function StockMovementsPage() {
           </Card>
         </div>
       </div>
-    </Layout>
+    
   );
 }

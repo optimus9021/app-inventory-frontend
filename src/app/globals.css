@@ -93,4 +93,65 @@
   .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
     background: hsl(var(--muted-foreground) / 0.6);
   }
+
+  /* Ensure header buttons are clickable - allow icons to be clickable too */
+  header button {
+    pointer-events: auto !important;
+    cursor: pointer !important;
+    border: none !important;
+    background: transparent !important;
+    outline: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Make icons clickable - they should pass events to parent button */
+  header button svg,
+  header button > * {
+    cursor: pointer !important;
+    pointer-events: auto !important;
+  }
+
+  /* Debug mode - uncomment to see button boundaries */
+  /*
+  header button {
+    border: 1px solid red !important;
+    background: rgba(255, 0, 0, 0.1) !important;
+  }
+  header button svg {
+    border: 1px solid blue !important;
+    background: rgba(0, 0, 255, 0.1) !important;
+  }
+  */
+
+  /* Optional: Show clickable area on hover for better UX */
+  header button:hover {
+    background: rgba(0, 0, 0, 0.05) !important;
+  }
+
+  header button svg:hover {
+    transform: scale(1.1);
+    transition: transform 0.2s ease;
+  }
+
+  header button:focus {
+    outline: 2px solid rgba(59, 130, 246, 0.5) !important;
+    outline-offset: 2px !important;
+  }
+
+  header button:hover {
+    opacity: 0.8;
+  }
+
+  /* Ensure all interactive elements in header are clickable */
+  header button,
+  header a,
+  header input {
+    pointer-events: auto !important;
+  }
+
+  /* Fix for any overlay issues */
+  .fixed.z-50 {
+    pointer-events: auto;
+  }
 }

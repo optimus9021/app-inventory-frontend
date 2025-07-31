@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Layout } from '@/components/layout/Layout';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -424,7 +423,7 @@ export default function POTimelinePage() {
   const avgProgress = filteredPOs.reduce((sum, po) => sum + po.completionPercentage, 0) / filteredPOs.length;
 
   return (
-    <Layout>
+    
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <div>
@@ -755,6 +754,6 @@ export default function POTimelinePage() {
           </div>
         </Card>
       </div>
-    </Layout>
+    
   );
 }

@@ -231,24 +231,24 @@ const SidebarItem: React.FC<SidebarItemProps> = ({ item, isCollapsed, level = 0 
 export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed }) => {
   return (
     <div className={cn(
-      "h-full bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 transition-all duration-300 shadow-sm flex flex-col",
+      "h-full bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm border-r border-gray-200/80 dark:border-gray-700/80 transition-all duration-300 shadow-xl flex flex-col",
       {
         "w-64": !isCollapsed,
         "w-16": isCollapsed
       }
     )}>
       {/* Logo Section */}
-      <div className="p-4 border-b border-gray-200 dark:border-gray-800">
+      <div className="p-4 border-b border-gray-200/80 dark:border-gray-700/80">
         <div className="flex items-center space-x-2">
-          <div className="h-8 w-8 bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg flex items-center justify-center shadow-sm">
+          <div className="h-8 w-8 bg-gradient-to-br from-blue-600 to-blue-700 dark:from-blue-500 dark:to-blue-600 rounded-lg flex items-center justify-center shadow-lg transition-colors duration-300">
             <Package className="h-4 w-4 text-white" />
           </div>
           {!isCollapsed && (
-            <div className="transition-opacity duration-300">
-              <h1 className="text-lg font-bold text-gray-900 dark:text-white">
+            <div className="transition-all duration-300 opacity-100">
+              <h1 className="text-lg font-bold text-gray-900 dark:text-white transition-colors duration-300">
                 Inventory
               </h1>
-              <p className="text-xs text-gray-500 dark:text-gray-400">
+              <p className="text-xs text-gray-500 dark:text-gray-400 transition-colors duration-300">
                 Management System
               </p>
             </div>
@@ -257,7 +257,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed }) => {
       </div>
       
       {/* Navigation Menu */}
-      <nav className="flex-1 px-4 py-4 space-y-1 overflow-y-auto">
+      <nav className="flex-1 px-4 py-4 space-y-1 overflow-y-auto custom-scrollbar">
         {menuItems.map((item, index) => (
           <SidebarItem 
             key={index} 
@@ -269,9 +269,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed }) => {
 
       {/* Footer Section */}
       {!isCollapsed && (
-        <div className="p-4 border-t border-gray-200 dark:border-gray-800">
+        <div className="p-4 border-t border-gray-200/80 dark:border-gray-700/80">
           <div className="text-center">
-            <p className="text-xs text-gray-400 dark:text-gray-500">
+            <p className="text-xs text-gray-400 dark:text-gray-500 transition-colors duration-300">
               © 2025 Inventory System
             </p>
           </div>

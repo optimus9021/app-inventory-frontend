@@ -45,11 +45,15 @@ jobs:
           git checkout DEV
           git pull origin DEV
           
-          # Install dependencies
-          npm ci --omit=dev
+          # Install ALL dependencies (including TypeScript for build)
+          npm ci
           
           # Build application
           npm run build
+          
+          # Clean install production dependencies only after build
+          rm -rf node_modules
+          npm ci --omit=dev
           
           # Restart PM2 process
           pm2 restart 'inventory-fe-dev' || pm2 start npm --name 'inventory-fe-dev' -- start

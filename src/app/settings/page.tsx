@@ -1,524 +1,346 @@
 'use client';
 
 import { useState } from 'react';
-import Layout from '@/components/layout/Layout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Layout } from '@/components/layout/Layout';
+import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
 import { 
   Settings,
-  User,
+  Users,
   Shield,
   Bell,
+  Monitor,
+  User,
+  Lock,
+  Globe,
   Database,
-  Palette,
-  Download,
-  Upload,
-  Save,
-  Key,
-  Mail,
-  Phone,
-  MapPin
+  ArrowRight,
+  Activity,
+  Clock,
+  CheckCircle
 } from 'lucide-react';
+import Link from 'next/link';
 
-export default function SettingsPage() {
-  const [activeTab, setActiveTab] = useState('general');
-  const [loading, setLoading] = useState(false);
+interface SettingsModule {
+  id: string;
+  title: string;
+  description: string;
+  icon: React.ComponentType<{ className?: string }>;
+  href: string;
+  status: 'active' | 'maintenance' | 'disabled';
+  lastUpdated: string;
+  features: string[];
+  color: string;
+}
 
-  const tabs = [
-    { id: 'general', label: 'General', icon: Settings },
-    { id: 'profile', label: 'Profile', icon: User },
-    { id: 'security', label: 'Security', icon: Shield },
-    { id: 'notifications', label: 'Notifications', icon: Bell },
-    { id: 'backup', label: 'Backup & Restore', icon: Database },
-    { id: 'appearance', label: 'Appearance', icon: Palette }
+export default function SettingsHubPage() {
+  const [selectedCategory, setSelectedCategory] = useState('all');
+
+  // Mock data
+  const settingsModules: SettingsModule[] = [
+    {
+      id: '1',
+      title: 'Manajemen Pengguna',
+      description: 'Kelola akun pengguna, profil, dan data personal',
+      icon: Users,
+      href: '/settings/users',
+      status: 'active',
+      lastUpdated: '2025-01-31',
+      features: ['Tambah/Edit User', 'Role Assignment', 'Profil Management', 'Status Aktivasi'],
+      color: 'blue'
+    },
+    {
+      id: '2',
+      title: 'Manajemen Izin',
+      description: 'Konfigurasi hak akses, role, dan permission sistem',
+      icon: Shield,
+      href: '/settings/permissions',
+      status: 'active',
+      lastUpdated: '2025-01-30',
+      features: ['Role-based Access', 'Permission Matrix', 'Module Access', 'Security Policies'],
+      color: 'green'
+    },
+    {
+      id: '3',
+      title: 'Pengaturan Notifikasi',
+      description: 'Konfigurasi sistem notifikasi dan alert',
+      icon: Bell,
+      href: '/settings/notifications',
+      status: 'active',
+      lastUpdated: '2025-01-29',
+      features: ['Email Templates', 'Push Notifications', 'Alert Rules', 'Frequency Settings'],
+      color: 'orange'
+    },
+    {
+      id: '4',
+      title: 'Pengaturan Sistem',
+      description: 'Konfigurasi sistem, database, dan preferensi aplikasi',
+      icon: Monitor,
+      href: '/settings/system',
+      status: 'active',
+      lastUpdated: '2025-01-28',
+      features: ['System Config', 'Database Settings', 'API Settings', 'Backup Management'],
+      color: 'purple'
+    }
   ];
 
-  const handleSave = async () => {
-    setLoading(true);
-    // Simulate save
-    setTimeout(() => {
-      setLoading(false);
-      alert('Settings saved successfully!');
-    }, 1000);
-  };
-
-  const renderTabContent = () => {
-    switch (activeTab) {
-      case 'general':
-        return (
-          <div className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Company Information</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Company Name
-                    </label>
-                    <Input defaultValue="PT Inventory Solutions" />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Business Type
-                    </label>
-                    <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                      <option>Retail</option>
-                      <option>Wholesale</option>
-                      <option>Manufacturing</option>
-                      <option>Distribution</option>
-                    </select>
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      <Mail className="w-4 h-4 inline mr-2" />
-                      Email
-                    </label>
-                    <Input type="email" defaultValue="admin@company.com" />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      <Phone className="w-4 h-4 inline mr-2" />
-                      Phone
-                    </label>
-                    <Input defaultValue="+62-21-5555-0000" />
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    <MapPin className="w-4 h-4 inline mr-2" />
-                    Address
-                  </label>
-                  <textarea 
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    rows={3}
-                    defaultValue="Jl. Sudirman No. 123, Jakarta Pusat, DKI Jakarta 10220"
-                  />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>System Preferences</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Default Currency
-                    </label>
-                    <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                      <option>IDR - Indonesian Rupiah</option>
-                      <option>USD - US Dollar</option>
-                      <option>EUR - Euro</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Timezone
-                    </label>
-                    <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                      <option>Asia/Jakarta (WIB)</option>
-                      <option>Asia/Makassar (WITA)</option>
-                      <option>Asia/Jayapura (WIT)</option>
-                    </select>
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Date Format
-                    </label>
-                    <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                      <option>DD/MM/YYYY</option>
-                      <option>MM/DD/YYYY</option>
-                      <option>YYYY-MM-DD</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Language
-                    </label>
-                    <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                      <option>Bahasa Indonesia</option>
-                      <option>English</option>
-                    </select>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        );
-
-      case 'profile':
-        return (
-          <div className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>User Profile</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center space-x-4">
-                  <div className="w-20 h-20 bg-gray-300 rounded-full flex items-center justify-center">
-                    <User className="w-8 h-8 text-gray-600" />
-                  </div>
-                  <div>
-                    <Button variant="outline">Upload Photo</Button>
-                    <p className="text-sm text-gray-500 mt-1">JPG, PNG up to 2MB</p>
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      First Name
-                    </label>
-                    <Input defaultValue="Admin" />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Last Name
-                    </label>
-                    <Input defaultValue="User" />
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Email
-                    </label>
-                    <Input type="email" defaultValue="admin@company.com" />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Phone
-                    </label>
-                    <Input defaultValue="+62-812-3456-7890" />
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Role
-                  </label>
-                  <div className="flex items-center space-x-2">
-                    <Badge className="bg-blue-100 text-blue-800">Administrator</Badge>
-                    <span className="text-sm text-gray-500">Full system access</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        );
-
-      case 'security':
-        return (
-          <div className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Password & Security</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Current Password
-                  </label>
-                  <Input type="password" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    New Password
-                  </label>
-                  <Input type="password" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Confirm New Password
-                  </label>
-                  <Input type="password" />
-                </div>
-                <Button>
-                  <Key className="w-4 h-4 mr-2" />
-                  Update Password
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Two-Factor Authentication</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium">Enable 2FA</p>
-                    <p className="text-sm text-gray-600">Add an extra layer of security</p>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Badge className="bg-red-100 text-red-800">Disabled</Badge>
-                    <Button variant="outline">Enable</Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Login History</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {[
-                    { date: '2024-01-16 10:30', ip: '192.168.1.100', device: 'Chrome on Windows' },
-                    { date: '2024-01-15 14:20', ip: '192.168.1.101', device: 'Safari on macOS' },
-                    { date: '2024-01-14 09:15', ip: '192.168.1.100', device: 'Chrome on Windows' }
-                  ].map((session, index) => (
-                    <div key={index} className="flex items-center justify-between py-2 border-b">
-                      <div>
-                        <p className="font-medium">{session.device}</p>
-                        <p className="text-sm text-gray-600">{session.ip} • {session.date}</p>
-                      </div>
-                      <Badge className="bg-green-100 text-green-800">Active</Badge>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        );
-
-      case 'notifications':
-        return (
-          <div className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Email Notifications</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {[
-                  { label: 'Low Stock Alerts', description: 'Get notified when products are running low' },
-                  { label: 'New Orders', description: 'Receive notifications for new purchase orders' },
-                  { label: 'Sales Reports', description: 'Daily sales summary emails' },
-                  { label: 'System Updates', description: 'Important system announcements' }
-                ].map((item, index) => (
-                  <div key={index} className="flex items-center justify-between">
-                    <div>
-                      <p className="font-medium">{item.label}</p>
-                      <p className="text-sm text-gray-600">{item.description}</p>
-                    </div>
-                    <input type="checkbox" defaultChecked className="rounded" />
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Push Notifications</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {[
-                  { label: 'Critical Alerts', description: 'Urgent system notifications' },
-                  { label: 'Order Updates', description: 'Status changes for orders' },
-                  { label: 'Inventory Changes', description: 'Stock movement notifications' }
-                ].map((item, index) => (
-                  <div key={index} className="flex items-center justify-between">
-                    <div>
-                      <p className="font-medium">{item.label}</p>
-                      <p className="text-sm text-gray-600">{item.description}</p>
-                    </div>
-                    <input type="checkbox" defaultChecked={index === 0} className="rounded" />
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-          </div>
-        );
-
-      case 'backup':
-        return (
-          <div className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Backup Settings</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <p className="font-medium mb-2">Automatic Backup</p>
-                  <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option>Daily</option>
-                    <option>Weekly</option>
-                    <option>Monthly</option>
-                    <option>Disabled</option>
-                  </select>
-                </div>
-                <div>
-                  <p className="font-medium mb-2">Backup Location</p>
-                  <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option>Local Storage</option>
-                    <option>Google Drive</option>
-                    <option>Amazon S3</option>
-                    <option>Dropbox</option>
-                  </select>
-                </div>
-                <div className="flex gap-2">
-                  <Button>
-                    <Upload className="w-4 h-4 mr-2" />
-                    Create Backup Now
-                  </Button>
-                  <Button variant="outline">
-                    <Download className="w-4 h-4 mr-2" />
-                    Download Backup
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Recent Backups</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {[
-                    { date: '2024-01-16 02:00', size: '156 MB', status: 'success' },
-                    { date: '2024-01-15 02:00', size: '152 MB', status: 'success' },
-                    { date: '2024-01-14 02:00', size: '148 MB', status: 'success' }
-                  ].map((backup, index) => (
-                    <div key={index} className="flex items-center justify-between py-2 border-b">
-                      <div>
-                        <p className="font-medium">{backup.date}</p>
-                        <p className="text-sm text-gray-600">Size: {backup.size}</p>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <Badge className="bg-green-100 text-green-800">Success</Badge>
-                        <Button variant="ghost" size="sm">
-                          <Download className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        );
-
-      case 'appearance':
-        return (
-          <div className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Theme Settings</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <p className="font-medium mb-2">Color Theme</p>
-                  <div className="grid grid-cols-3 gap-3">
-                    {['Light', 'Dark', 'Auto'].map((theme) => (
-                      <div key={theme} className="border rounded-md p-3 cursor-pointer hover:bg-gray-50">
-                        <div className="w-full h-16 bg-gray-200 rounded mb-2"></div>
-                        <p className="text-center text-sm">{theme}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <div>
-                  <p className="font-medium mb-2">Accent Color</p>
-                  <div className="flex space-x-2">
-                    {['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'].map((color) => (
-                      <div
-                        key={color}
-                        className="w-8 h-8 rounded-full cursor-pointer border-2 border-gray-300"
-                        style={{ backgroundColor: color }}
-                      ></div>
-                    ))}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Layout Settings</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium">Compact Mode</p>
-                    <p className="text-sm text-gray-600">Reduce spacing for more content</p>
-                  </div>
-                  <input type="checkbox" className="rounded" />
-                </div>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium">Sidebar Auto-Hide</p>
-                    <p className="text-sm text-gray-600">Hide sidebar on small screens</p>
-                  </div>
-                  <input type="checkbox" defaultChecked className="rounded" />
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        );
-
-      default:
-        return null;
+  const recentActivities = [
+    {
+      id: '1',
+      action: 'User role updated',
+      user: 'Admin System',
+      target: 'John Doe - Manager Role',
+      timestamp: '2025-01-31 10:30',
+      type: 'user'
+    },
+    {
+      id: '2',
+      action: 'Permission modified',
+      user: 'Super Admin',
+      target: 'Inventory Module - Read Access',
+      timestamp: '2025-01-31 09:15',
+      type: 'permission'
+    },
+    {
+      id: '3',
+      action: 'Notification rule created',
+      user: 'System Manager',
+      target: 'Low Stock Alert - Email',
+      timestamp: '2025-01-30 16:45',
+      type: 'notification'
+    },
+    {
+      id: '4',
+      action: 'System backup completed',
+      user: 'System',
+      target: 'Daily Database Backup',
+      timestamp: '2025-01-30 02:00',
+      type: 'system'
     }
+  ];
+
+  const systemStatus = [
+    { label: 'Active Users', value: '24', status: 'good' },
+    { label: 'System Health', value: '99.9%', status: 'good' },
+    { label: 'Last Backup', value: '2 hours ago', status: 'good' },
+    { label: 'Pending Updates', value: '3', status: 'warning' }
+  ];
+
+  const getStatusBadge = (status: string) => {
+    const statusConfig = {
+      active: { label: 'Aktif', className: 'bg-green-100 text-green-800' },
+      maintenance: { label: 'Maintenance', className: 'bg-yellow-100 text-yellow-800' },
+      disabled: { label: 'Nonaktif', className: 'bg-red-100 text-red-800' }
+    };
+    
+    const config = statusConfig[status as keyof typeof statusConfig];
+    return (
+      <Badge className={config.className}>
+        {config.label}
+      </Badge>
+    );
   };
+
+  const getActivityIcon = (type: string) => {
+    const iconConfig = {
+      user: Users,
+      permission: Shield,
+      notification: Bell,
+      system: Monitor
+    };
+    
+    const IconComponent = iconConfig[type as keyof typeof iconConfig] || Activity;
+    return <IconComponent className="w-4 h-4" />;
+  };
+
+  const filteredModules = settingsModules.filter(module => {
+    if (selectedCategory === 'all') return true;
+    return module.status === selectedCategory;
+  });
 
   return (
     <Layout>
-      <div className="p-6">
+      <div className="space-y-6">
         {/* Header */}
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
-          <p className="text-gray-600 mt-1">Manage your application preferences and configuration</p>
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Pengaturan Sistem</h1>
+            <p className="text-gray-600 mt-1">
+              Kelola konfigurasi sistem, pengguna, dan pengaturan aplikasi
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="all">Semua Module</option>
+              <option value="active">Aktif</option>
+              <option value="maintenance">Maintenance</option>
+              <option value="disabled">Nonaktif</option>
+            </select>
+          </div>
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-6">
-          {/* Sidebar */}
-          <div className="lg:w-64">
-            <nav className="space-y-1">
-              {tabs.map((tab) => {
-                const Icon = tab.icon;
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`w-full flex items-center px-3 py-2 text-sm font-medium rounded-md ${
-                      activeTab === tab.id
-                        ? 'bg-blue-100 text-blue-700'
-                        : 'text-gray-600 hover:bg-gray-50'
-                    }`}
-                  >
-                    <Icon className="mr-3 h-5 w-5" />
-                    {tab.label}
-                  </button>
-                );
-              })}
-            </nav>
-          </div>
+        {/* System Status Overview */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          {systemStatus.map((item, index) => (
+            <Card key={index} className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">{item.label}</p>
+                  <p className="text-2xl font-bold text-gray-900">{item.value}</p>
+                </div>
+                <div className={`p-3 rounded-full ${
+                  item.status === 'good' 
+                    ? 'bg-green-100' 
+                    : item.status === 'warning' 
+                      ? 'bg-yellow-100' 
+                      : 'bg-red-100'
+                }`}>
+                  <CheckCircle className={`w-6 h-6 ${
+                    item.status === 'good' 
+                      ? 'text-green-600' 
+                      : item.status === 'warning' 
+                        ? 'text-yellow-600' 
+                        : 'text-red-600'
+                  }`} />
+                </div>
+              </div>
+            </Card>
+          ))}
+        </div>
 
-          {/* Content */}
-          <div className="flex-1">
-            {renderTabContent()}
-            
-            {/* Save Button */}
-            <div className="mt-6 pt-6 border-t border-gray-200">
-              <div className="flex justify-end">
-                <Button onClick={handleSave} disabled={loading}>
-                  <Save className="w-4 h-4 mr-2" />
-                  {loading ? 'Saving...' : 'Save Changes'}
-                </Button>
+        {/* Settings Modules */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {filteredModules.map((module) => {
+            const IconComponent = module.icon;
+            return (
+              <Card key={module.id} className="p-6 hover:shadow-lg transition-shadow">
+                {/* Module Header */}
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <div className={`p-3 rounded-lg bg-${module.color}-100`}>
+                      <IconComponent className={`w-6 h-6 text-${module.color}-600`} />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-lg">{module.title}</h3>
+                      {getStatusBadge(module.status)}
+                    </div>
+                  </div>
+                  <div className="text-sm text-gray-500">
+                    <Clock className="w-4 h-4 inline mr-1" />
+                    {module.lastUpdated}
+                  </div>
+                </div>
+
+                {/* Description */}
+                <p className="text-gray-600 mb-4">{module.description}</p>
+
+                {/* Features */}
+                <div className="mb-4">
+                  <h4 className="font-medium text-sm text-gray-700 mb-2">Fitur Utama:</h4>
+                  <div className="grid grid-cols-2 gap-1">
+                    {module.features.map((feature, index) => (
+                      <div key={index} className="flex items-center gap-1 text-sm text-gray-600">
+                        <CheckCircle className="w-3 h-3 text-green-500" />
+                        <span>{feature}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Action Button */}
+                <Link href={module.href}>
+                  <Button className="w-full flex items-center justify-center gap-2">
+                    <Settings className="w-4 h-4" />
+                    Kelola {module.title}
+                    <ArrowRight className="w-4 h-4" />
+                  </Button>
+                </Link>
+              </Card>
+            );
+          })}
+        </div>
+
+        {/* Recent Activities */}
+        <Card className="p-6">
+          <h3 className="text-lg font-semibold mb-4">Aktivitas Terbaru</h3>
+          <div className="space-y-4">
+            {recentActivities.map((activity) => (
+              <div key={activity.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-white rounded-full">
+                    {getActivityIcon(activity.type)}
+                  </div>
+                  <div>
+                    <div className="font-medium">{activity.action}</div>
+                    <div className="text-sm text-gray-600">
+                      oleh {activity.user} • {activity.target}
+                    </div>
+                  </div>
+                </div>
+                <div className="text-sm text-gray-500">{activity.timestamp}</div>
+              </div>
+            ))}
+          </div>
+        </Card>
+
+        {/* Quick Actions */}
+        <Card className="p-6">
+          <h3 className="text-lg font-semibold mb-4">Aksi Cepat</h3>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <Button className="flex items-center justify-center gap-2 h-12">
+              <User className="w-5 h-5" />
+              Tambah User Baru
+            </Button>
+            <Button variant="outline" className="flex items-center justify-center gap-2 h-12">
+              <Lock className="w-5 h-5" />
+              Update Permissions
+            </Button>
+            <Button variant="outline" className="flex items-center justify-center gap-2 h-12">
+              <Database className="w-5 h-5" />
+              Backup Database
+            </Button>
+            <Button variant="outline" className="flex items-center justify-center gap-2 h-12">
+              <Globe className="w-5 h-5" />
+              System Diagnostics
+            </Button>
+          </div>
+        </Card>
+
+        {/* System Information */}
+        <Card className="p-6">
+          <h3 className="text-lg font-semibold mb-4">Informasi Sistem</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div>
+              <h4 className="font-medium mb-2">Aplikasi</h4>
+              <div className="space-y-1 text-sm text-gray-600">
+                <div>Versi: 2.0.0</div>
+                <div>Build: 20250131</div>
+                <div>Environment: Production</div>
+              </div>
+            </div>
+            <div>
+              <h4 className="font-medium mb-2">Database</h4>
+              <div className="space-y-1 text-sm text-gray-600">
+                <div>Type: PostgreSQL</div>
+                <div>Version: 14.2</div>
+                <div>Size: 2.4 GB</div>
+              </div>
+            </div>
+            <div>
+              <h4 className="font-medium mb-2">Server</h4>
+              <div className="space-y-1 text-sm text-gray-600">
+                <div>OS: Ubuntu 22.04</div>
+                <div>Memory: 8 GB</div>
+                <div>Storage: 100 GB SSD</div>
               </div>
             </div>
           </div>
-        </div>
+        </Card>
       </div>
     </Layout>
   );

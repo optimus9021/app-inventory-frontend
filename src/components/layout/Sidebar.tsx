@@ -138,37 +138,54 @@ const SidebarItem: React.FC<SidebarItemProps> = ({ item, isCollapsed, level = 0 
   const itemContent = (
     <div 
       className={cn(
-        "flex items-center justify-between w-full px-3 py-2 text-sm rounded-lg transition-colors",
-        "hover:bg-gray-100 dark:hover:bg-gray-800",
+        "flex items-center justify-between w-full px-3 py-2.5 text-sm rounded-xl transition-all duration-200 relative group",
+        "hover:bg-gray-100 dark:hover:bg-gray-800 hover:shadow-sm hover:scale-[1.02]",
         {
-          "bg-blue-50 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300": isActive,
+          "bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 dark:from-blue-900/50 dark:to-blue-800/30 dark:text-blue-300 shadow-sm border border-blue-200 dark:border-blue-700": isActive,
           "text-gray-700 dark:text-gray-300": !isActive,
           "pl-6": level > 0,
           "pl-9": level > 1,
+          "bg-gradient-to-r from-orange-50 to-yellow-50 hover:from-orange-100 hover:to-yellow-100 dark:from-orange-900/20 dark:to-yellow-900/20 dark:hover:from-orange-900/30 dark:hover:to-yellow-900/30 border border-orange-200 dark:border-orange-700": item.title === "Notifications" && item.badge,
         }
       )}
       onClick={handleClick}
     >
       <div className="flex items-center space-x-3">
-        <item.icon className={cn("h-5 w-5", {
+        <item.icon className={cn("transition-all duration-200 group-hover:scale-110", {
+          "h-5 w-5": level === 0,
           "h-4 w-4": level > 0
         })} />
         {!isCollapsed && (
-          <span className="font-medium">{item.title}</span>
+          <span className="font-medium transition-all duration-200">{item.title}</span>
         )}
       </div>
+      
+      {isCollapsed && item.badge && (
+        <Badge 
+          variant="destructive" 
+          className="absolute -top-1 -right-1 h-4 w-4 rounded-full p-0 text-[10px] flex items-center justify-center min-w-[16px] animate-pulse shadow-lg"
+        >
+          {item.badge}
+        </Badge>
+      )}
       
       {!isCollapsed && (
         <div className="flex items-center space-x-2">
           {item.badge && (
-            <Badge variant="destructive" className="h-5 w-5 rounded-full p-0 text-xs">
+            <Badge 
+              variant="destructive" 
+              className="h-5 w-5 rounded-full p-0 text-xs flex items-center justify-center min-w-[20px] animate-pulse shadow-sm"
+            >
               {item.badge}
             </Badge>
           )}
           {hasChildren && (
-            isExpanded ? 
-              <ChevronDown className="h-4 w-4" /> : 
-              <ChevronRight className="h-4 w-4" />
+            <div className="transition-transform duration-200">
+              {isExpanded ? 
+                <ChevronDown className="h-4 w-4" /> : 
+                <ChevronRight className="h-4 w-4" />
+              }
+            </div>
           )}
         </div>
       )}
@@ -176,9 +193,9 @@ const SidebarItem: React.FC<SidebarItemProps> = ({ item, isCollapsed, level = 0 
   )
 
   return (
-    <div>
+    <div className="relative">
       {item.href ? (
-        <Link href={item.href}>
+        <Link href={item.href} className="block">
           {itemContent}
         </Link>
       ) : (
@@ -186,9 +203,17 @@ const SidebarItem: React.FC<SidebarItemProps> = ({ item, isCollapsed, level = 0 
           {itemContent}
         </button>
       )}
+
+      {/* Tooltip for collapsed state */}
+      {isCollapsed && level === 0 && (
+        <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 bg-gray-900 text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-50 whitespace-nowrap">
+          {item.title}
+          <div className="absolute top-1/2 -left-1 -translate-y-1/2 border-r-4 border-r-gray-900 border-t-2 border-t-transparent border-b-2 border-b-transparent"></div>
+        </div>
+      )}
       
       {hasChildren && isExpanded && !isCollapsed && (
-        <div className="mt-1 space-y-1">
+        <div className="mt-1 space-y-1 ml-2">
           {item.children?.map((child, index) => (
             <SidebarItem 
               key={index} 
@@ -206,19 +231,20 @@ const SidebarItem: React.FC<SidebarItemProps> = ({ item, isCollapsed, level = 0 
 export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed }) => {
   return (
     <div className={cn(
-      "h-full bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 transition-all duration-300",
+      "h-full bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 transition-all duration-300 shadow-sm flex flex-col",
       {
         "w-64": !isCollapsed,
         "w-16": isCollapsed
       }
     )}>
-      <div className="p-4">
+      {/* Logo Section */}
+      <div className="p-4 border-b border-gray-200 dark:border-gray-800">
         <div className="flex items-center space-x-2">
-          <div className="h-8 w-8 bg-blue-600 rounded-lg flex items-center justify-center">
+          <div className="h-8 w-8 bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg flex items-center justify-center shadow-sm">
             <Package className="h-4 w-4 text-white" />
           </div>
           {!isCollapsed && (
-            <div>
+            <div className="transition-opacity duration-300">
               <h1 className="text-lg font-bold text-gray-900 dark:text-white">
                 Inventory
               </h1>
@@ -230,7 +256,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed }) => {
         </div>
       </div>
       
-      <nav className="px-4 pb-4 space-y-1">
+      {/* Navigation Menu */}
+      <nav className="flex-1 px-4 py-4 space-y-1 overflow-y-auto">
         {menuItems.map((item, index) => (
           <SidebarItem 
             key={index} 
@@ -239,6 +266,17 @@ export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed }) => {
           />
         ))}
       </nav>
+
+      {/* Footer Section */}
+      {!isCollapsed && (
+        <div className="p-4 border-t border-gray-200 dark:border-gray-800">
+          <div className="text-center">
+            <p className="text-xs text-gray-400 dark:text-gray-500">
+              © 2025 Inventory System
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

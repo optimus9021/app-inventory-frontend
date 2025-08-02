@@ -93,13 +93,13 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
             className="lg:hidden"
             onClick={onToggleSidebar}
           >
-            <Menu className="h-5 w-5 pointer-events-auto" />
+            <Menu className="h-5 w-5" />
             <span className="sr-only">Toggle menu</span>
           </Button>
 
           {/* Search */}
           <div className="relative">
-            <Search className={`absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transition-colors pointer-events-auto ${
+            <Search className={`absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transition-colors ${
               searchFocused ? 'text-primary' : 'text-muted-foreground'
             }`} />
             <Input
@@ -123,25 +123,25 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
             variant="ghost"
             size="icon"
             onClick={handleToggleTheme}
-            className="relative overflow-hidden"
+            className="relative overflow-hidden z-[80]"
           >
             {theme === 'dark' ? (
-                <Sun className="h-5 w-5 text-yellow-500 transition-all duration-300 hover:scale-110 pointer-events-auto" />
+                <Sun className="h-5 w-5 text-yellow-500 transition-all duration-300 hover:scale-110" />
               ) : (
-                <Moon className="h-5 w-5 transition-all duration-300 hover:scale-110 pointer-events-auto" />
+                <Moon className="h-5 w-5 transition-all duration-300 hover:scale-110" />
               )}
             <span className="sr-only">Toggle theme</span>
           </Button>
 
           {/* Notifications */}
-          <div className="relative" ref={notificationRef}>
+          <div className="relative z-[85]" ref={notificationRef}>
             <Button
               variant="ghost"
               size="icon"
               onClick={handleToggleNotifications}
-              className="relative"
+              className="relative z-[80]"
             >
-              <Bell className={`h-5 w-5 transition-all duration-200 pointer-events-auto ${
+              <Bell className={`h-5 w-5 transition-all duration-200 ${
                 showNotifications ? 'scale-110 text-primary' : ''
               }`} />
               {notificationCount > 0 && (
@@ -157,7 +157,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
 
             {/* Notifications Dropdown */}
             {showNotifications && (
-              <div className="absolute right-0 top-full mt-2 w-80 rounded-lg border bg-popover p-0 shadow-lg animate-in slide-in-from-top-2 duration-200">
+              <div className="absolute right-0 top-full mt-2 w-80 rounded-lg border bg-popover p-0 shadow-lg animate-in slide-in-from-top-2 duration-200 z-[90]">
                 <div className="flex items-center justify-between p-4 border-b">
                   <h3 className="font-semibold">Notifications</h3>
                   <Link 
@@ -231,7 +231,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
           </div>
 
           {/* User Menu */}
-          <div className="relative" ref={userMenuRef}>
+          <div className="relative z-[85]" ref={userMenuRef}>
             <div className="flex items-center gap-3">
               {/* User Info - Hidden on mobile */}
               <div className="hidden sm:block text-right">
@@ -244,18 +244,18 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
                 variant="ghost"
                 size="icon"
                 onClick={handleToggleUserMenu}
-                className={`relative rounded-full transition-all duration-200 ${
+                className={`relative rounded-full transition-all duration-200 z-[80] ${
                   showUserMenu ? 'ring-2 ring-primary/20 bg-muted' : ''
                 }`}
               >
-                <User className="h-5 w-5 pointer-events-auto" />
+                <User className="h-5 w-5" />
                 <span className="sr-only">User menu</span>
               </Button>
             </div>
 
             {/* User Dropdown */}
             {showUserMenu && (
-              <div className="absolute right-0 top-full mt-2 w-56 rounded-lg border bg-popover p-1 shadow-lg animate-in slide-in-from-top-2 duration-200">
+              <div className="absolute right-0 top-full mt-2 w-56 rounded-lg border bg-popover p-1 shadow-lg animate-in slide-in-from-top-2 duration-200 z-[90]">
                 <div className="px-3 py-2 border-b">
                   <p className="text-sm font-medium">{userProfile.name}</p>
                   <p className="text-xs text-muted-foreground">{userProfile.email}</p>
@@ -267,7 +267,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
                     className="flex items-center gap-2 rounded-sm px-3 py-2 text-sm hover:bg-muted transition-colors"
                     onClick={() => setShowUserMenu(false)}
                   >
-                    <Settings className="h-4 w-4 pointer-events-auto" />
+                    <Settings className="h-4 w-4" />
                     Settings
                   </Link>
                   
@@ -275,7 +275,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
                     onClick={handleLogout}
                     className="flex w-full items-center gap-2 rounded-sm px-3 py-2 text-sm hover:bg-muted transition-colors text-destructive"
                   >
-                    <LogOut className="h-4 w-4 pointer-events-auto" />
+                    <LogOut className="h-4 w-4" />
                     Logout
                   </button>
                 </div>

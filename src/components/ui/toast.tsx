@@ -64,7 +64,7 @@ const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
     return (
       <div
         ref={ref}
-        className={cn(toastVariants({ variant }), className)}
+        className={cn(toastVariants({ variant }), "pointer-events-auto", className)}
         {...props}
       >
         <div className="flex items-start space-x-3">
@@ -130,7 +130,7 @@ const ToastContainer: React.FC<ToastContainerProps> = ({
 }) => {
   return (
     <div className={cn(
-      "fixed z-[70] flex max-h-screen w-full flex-col-reverse gap-2 p-4 sm:max-w-[420px]",
+      "fixed z-[60] flex max-h-screen w-full flex-col-reverse gap-2 p-4 sm:max-w-[420px] pointer-events-none",
       positionClasses[position]
     )}>
       {children}

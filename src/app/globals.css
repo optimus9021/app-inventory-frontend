@@ -94,22 +94,20 @@
     background: hsl(var(--muted-foreground) / 0.6);
   }
 
-  /* Ensure header buttons are clickable - allow icons to be clickable too */
-  header button {
+  /* Ensure header buttons are clickable */
+  header button,
+  header div[role="button"] {
     pointer-events: auto !important;
     cursor: pointer !important;
-    border: none !important;
-    background: transparent !important;
-    outline: none !important;
-    padding: 0 !important;
-    margin: 0 !important;
   }
 
-  /* Make icons clickable - they should pass events to parent button */
+  /* Make icons NOT intercept clicks - let parent button handle them */
   header button svg,
-  header button > * {
+  header button > svg,
+  header div[role="button"] svg,
+  header div[role="button"] > svg {
+    pointer-events: none !important;
     cursor: pointer !important;
-    pointer-events: auto !important;
   }
 
   /* Debug mode - uncomment to see button boundaries */
@@ -124,27 +122,9 @@
   }
   */
 
-  /* Optional: Show clickable area on hover for better UX */
-  header button:hover {
-    background: rgba(0, 0, 0, 0.05) !important;
-  }
-
-  header button svg:hover {
-    transform: scale(1.1);
-    transition: transform 0.2s ease;
-  }
-
-  header button:focus {
-    outline: 2px solid rgba(59, 130, 246, 0.5) !important;
-    outline-offset: 2px !important;
-  }
-
-  header button:hover {
-    opacity: 0.8;
-  }
-
   /* Ensure all interactive elements in header are clickable */
   header button,
+  header div[role="button"],
   header a,
   header input {
     pointer-events: auto !important;
@@ -153,5 +133,10 @@
   /* Fix for any overlay issues */
   .fixed.z-50 {
     pointer-events: auto;
+  }
+
+  /* Ensure header dropdowns are above everything */
+  header .absolute {
+    z-index: 90 !important;
   }
 }

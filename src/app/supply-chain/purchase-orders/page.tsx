@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Layout } from '@/components/layout/Layout';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -306,7 +305,7 @@ export default function PurchaseOrdersPage() {
   };
 
   return (
-    <Layout>
+    
       <div className="p-6 space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -588,6 +587,6 @@ export default function PurchaseOrdersPage() {
           </div>
         </Card>
       </div>
-    </Layout>
+    
   );
 }

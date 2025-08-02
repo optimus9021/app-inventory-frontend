@@ -1,12 +1,15 @@
 "use client"
 
-import React from "react"
+import React, { useState, useRef, useEffect } from "react"
 import Link from "next/link"
-import { Menu, Search, Bell, User, Sun, Moon, LogOut } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { Menu, Search, Bell, User, Sun, Moon, LogOut, Settings } from "lucide-react"
 import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useTheme } from "@/context/ThemeContext"
+import { useAppShell } from "@/context/AppShellContext"
+import { useRealtimeData } from "@/hooks/useRealtimeData"
+import { useToast } from "@/components/ui/toast"
 
 interface HeaderProps {
   onToggleSidebar: () => void
@@ -14,136 +17,271 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
   const { theme, toggleTheme } = useTheme()
-  const [showNotifications, setShowNotifications] = React.useState(false)
-  const notificationRef = React.useRef<HTMLDivElement>(null)
+  const { notificationCount, userProfile } = useAppShell()
+  const { notifications, markNotificationAsRead } = useRealtimeData()
+  const { addToast } = useToast()
   
-  // Close dropdown when clicking outside
-  React.useEffect(() => {
+  const [showNotifications, setShowNotifications] = useState(false)
+  const [showUserMenu, setShowUserMenu] = useState(false)
+  const [searchFocused, setSearchFocused] = useState(false)
+  
+  const notificationRef = useRef<HTMLDivElement>(null)
+  const userMenuRef = useRef<HTMLDivElement>(null)
+  
+  // Close dropdowns when clicking outside
+  useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (notificationRef.current && !notificationRef.current.contains(event.target as Node)) {
         setShowNotifications(false)
       }
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+        setShowUserMenu(false)
+      }
     }
 
     document.addEventListener('mousedown', handleClickOutside)
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
+    return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
-  const mockNotifications = [
-    { id: 1, title: "Low Stock Alert", message: "Product ABC running low", time: "2 min ago", unread: true },
-    { id: 2, title: "New Order", message: "Order #12345 received", time: "5 min ago", unread: true },
-    { id: 3, title: "Shipment Update", message: "Delivery completed", time: "1 hour ago", unread: false }
-  ]
+  const handleNotificationClick = (notificationId: string) => {
+    markNotificationAsRead(notificationId)
+    addToast({
+      title: "Notification",
+      description: "Notification marked as read",
+      variant: "success"
+    })
+  }
+
+  const handleToggleTheme = () => {
+    toggleTheme()
+    addToast({
+      title: "Theme Changed",
+      description: `Switched to ${theme === 'light' ? 'dark' : 'light'} mode`,
+      variant: "success"
+    })
+  }
+
+  const handleToggleNotifications = () => {
+    setShowNotifications(!showNotifications)
+    setShowUserMenu(false) // Close other dropdown
+  }
+
+  const handleToggleUserMenu = () => {
+    setShowUserMenu(!showUserMenu)
+    setShowNotifications(false) // Close other dropdown
+  }
+
+  const handleLogout = () => {
+    addToast({
+      title: "Logout",
+      description: "Logged out successfully",
+      variant: "warning"
+    })
+    setShowUserMenu(false)
+  }
 
   return (
-    <header className="h-16 w-full bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm border-b border-gray-200/80 dark:border-gray-700/80 px-4 flex items-center justify-between shadow-sm transition-all duration-300">
-      <div className="flex items-center space-x-4">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={onToggleSidebar}
-          className="lg:hidden hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200"
-        >
-          <Menu className="h-5 w-5" />
-        </Button>
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container flex h-16 items-center px-4">
         
-        <div className="relative">
-          <Search className="h-4 w-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 transition-colors duration-300" />
-          <Input
-            placeholder="Search products, orders, customers..."
-            className="pl-10 w-64 lg:w-96 bg-gray-50/80 dark:bg-gray-800/80 border-gray-200/80 dark:border-gray-700/80 focus:bg-white dark:focus:bg-gray-800 transition-all duration-300"
-          />
-        </div>
-      </div>
-      
-      <div className="flex items-center space-x-4">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={toggleTheme}
-          className="hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 hover:scale-105"
-          title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
-        >
-          <div className="relative overflow-hidden">
-            {theme === 'dark' ? (
-              <Sun className="h-5 w-5 text-yellow-500 animate-in spin-in-180 duration-500" />
-            ) : (
-              <Moon className="h-5 w-5 text-gray-600 dark:text-gray-400 animate-in spin-in-180 duration-500" />
-            )}
-          </div>
-        </Button>
-        
-        <div className="relative" ref={notificationRef}>
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="relative hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200"
-            onClick={() => setShowNotifications(!showNotifications)}
+        {/* Left Section */}
+        <div className="flex items-center gap-4">
+          {/* Mobile Menu Button */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="lg:hidden"
+            onClick={onToggleSidebar}
           >
-            <Bell className="h-5 w-5 text-gray-600 dark:text-gray-400 transition-colors duration-300" />
-            <Badge 
-              variant="destructive" 
-              className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 text-xs flex items-center justify-center min-w-[20px] animate-pulse shadow-lg"
-            >
-              3
-            </Badge>
+            <Menu className="h-5 w-5" />
+            <span className="sr-only">Toggle menu</span>
           </Button>
 
-          {showNotifications && (
-            <div className="absolute right-0 top-full mt-2 w-80 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm border border-gray-200/80 dark:border-gray-700/80 rounded-lg shadow-xl z-50 transition-all duration-300">
-              <div className="p-3 border-b border-gray-200/80 dark:border-gray-700/80">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-semibold text-gray-900 dark:text-white transition-colors duration-300">Notifications</h3>
-                  <Link href="/notifications" className="text-xs text-blue-600 dark:text-blue-400 hover:underline transition-colors duration-300">
+          {/* Search */}
+          <div className="relative">
+            <Search className={`absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transition-colors ${
+              searchFocused ? 'text-primary' : 'text-muted-foreground'
+            }`} />
+            <Input
+              placeholder="Search anything..."
+              className={`w-64 pl-10 transition-all duration-200 lg:w-96 ${
+                searchFocused 
+                  ? 'ring-2 ring-primary/20 border-primary/50' 
+                  : 'border-border'
+              }`}
+              onFocus={() => setSearchFocused(true)}
+              onBlur={() => setSearchFocused(false)}
+            />
+          </div>
+        </div>
+
+        {/* Right Section */}
+        <div className="ml-auto flex items-center gap-2">
+          
+          {/* Theme Toggle */}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleToggleTheme}
+            className="relative overflow-hidden z-[80]"
+          >
+            {theme === 'dark' ? (
+                <Sun className="h-5 w-5 text-yellow-500 transition-all duration-300 hover:scale-110" />
+              ) : (
+                <Moon className="h-5 w-5 transition-all duration-300 hover:scale-110" />
+              )}
+            <span className="sr-only">Toggle theme</span>
+          </Button>
+
+          {/* Notifications */}
+          <div className="relative z-[85]" ref={notificationRef}>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleToggleNotifications}
+              className="relative z-[80]"
+            >
+              <Bell className={`h-5 w-5 transition-all duration-200 ${
+                showNotifications ? 'scale-110 text-primary' : ''
+              }`} />
+              {notificationCount > 0 && (
+                <Badge 
+                  variant="destructive" 
+                  className="absolute -right-1 -top-1 h-5 w-5 min-w-[20px] p-0 text-xs animate-pulse flex items-center justify-center rounded-full"
+                >
+                  {notificationCount > 99 ? '99+' : notificationCount}
+                </Badge>
+              )}
+              <span className="sr-only">Notifications</span>
+            </Button>
+
+            {/* Notifications Dropdown */}
+            {showNotifications && (
+              <div className="absolute right-0 top-full mt-2 w-80 rounded-lg border bg-popover p-0 shadow-lg animate-in slide-in-from-top-2 duration-200 z-[90]">
+                <div className="flex items-center justify-between p-4 border-b">
+                  <h3 className="font-semibold">Notifications</h3>
+                  <Link 
+                    href="/notifications" 
+                    className="text-sm text-primary hover:underline"
+                    onClick={() => setShowNotifications(false)}
+                  >
                     View all
                   </Link>
                 </div>
-              </div>
-              <div className="max-h-64 overflow-y-auto custom-scrollbar">
-                {mockNotifications.map((notification) => (
-                  <div key={notification.id} className="p-3 hover:bg-gray-50/80 dark:hover:bg-gray-800/80 border-b border-gray-100/80 dark:border-gray-700/80 last:border-b-0 transition-all duration-200">
-                    <div className="flex items-start space-x-3">
-                      <div className={`w-2 h-2 rounded-full mt-2 transition-colors duration-300 ${notification.unread ? 'bg-blue-500 dark:bg-blue-400' : 'bg-gray-300 dark:bg-gray-600'}`} />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-gray-900 dark:text-white truncate transition-colors duration-300">
-                          {notification.title}
-                        </p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 truncate transition-colors duration-300">
-                          {notification.message}
-                        </p>
-                        <p className="text-xs text-gray-400 dark:text-gray-500 mt-1 transition-colors duration-300">
-                          {notification.time}
-                        </p>
+                <div className="max-h-64 overflow-y-auto">
+                  {notifications && notifications.length > 0 ? (
+                    notifications.slice(0, 5).map((notification) => (
+                      <div 
+                        key={notification.id} 
+                        className="flex items-start gap-3 p-4 hover:bg-muted/50 transition-colors cursor-pointer border-b last:border-0"
+                        onClick={() => handleNotificationClick(notification.id)}
+                      >
+                        <div className={`mt-2 h-2 w-2 rounded-full ${
+                          notification.unread ? 'bg-primary' : 'bg-muted'
+                        }`} />
+                        <div className="flex-1 space-y-1">
+                          <p className="text-sm font-medium leading-none">
+                            {notification.title || 'Notification'}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {notification.message || 'No message'}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {notification.time || 'Just now'}
+                          </p>
+                        </div>
                       </div>
+                    ))
+                  ) : notificationCount > 0 ? (
+                    // Show placeholder when count exists but no notification data
+                    <div className="p-4">
+                      {[...Array(Math.min(notificationCount, 3))].map((_, index) => (
+                        <div 
+                          key={index}
+                          className="flex items-start gap-3 p-3 hover:bg-muted/50 transition-colors cursor-pointer border-b last:border-0"
+                        >
+                          <div className="mt-2 h-2 w-2 rounded-full bg-primary" />
+                          <div className="flex-1 space-y-1">
+                            <p className="text-sm font-medium leading-none">
+                              New Notification
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              You have a new notification waiting
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              Just now
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                      {notificationCount > 3 && (
+                        <div className="p-3 text-center text-xs text-muted-foreground border-t">
+                          +{notificationCount - 3} more notifications
+                        </div>
+                      )}
                     </div>
-                  </div>
-                ))}
+                  ) : (
+                    <div className="p-4 text-center text-sm text-muted-foreground">
+                      No notifications
+                    </div>
+                  )}
+                </div>
               </div>
+            )}
+          </div>
+
+          {/* User Menu */}
+          <div className="relative z-[85]" ref={userMenuRef}>
+            <div className="flex items-center gap-3">
+              {/* User Info - Hidden on mobile */}
+              <div className="hidden sm:block text-right">
+                <p className="text-sm font-medium leading-none">{userProfile.name}</p>
+                <p className="text-xs text-muted-foreground">{userProfile.email}</p>
+              </div>
+              
+              {/* User Avatar Button */}
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleToggleUserMenu}
+                className={`relative rounded-full transition-all duration-200 z-[80] ${
+                  showUserMenu ? 'ring-2 ring-primary/20 bg-muted' : ''
+                }`}
+              >
+                <User className="h-5 w-5" />
+                <span className="sr-only">User menu</span>
+              </Button>
             </div>
-          )}
-        </div>
-        
-        <div className="flex items-center space-x-3">
-          <div className="text-right hidden sm:block transition-colors duration-300">
-            <p className="text-sm font-medium text-gray-900 dark:text-white">
-              Admin User
-            </p>
-            <p className="text-xs text-gray-500 dark:text-gray-400">
-              admin@company.com
-            </p>
+
+            {/* User Dropdown */}
+            {showUserMenu && (
+              <div className="absolute right-0 top-full mt-2 w-56 rounded-lg border bg-popover p-1 shadow-lg animate-in slide-in-from-top-2 duration-200 z-[90]">
+                <div className="px-3 py-2 border-b">
+                  <p className="text-sm font-medium">{userProfile.name}</p>
+                  <p className="text-xs text-muted-foreground">{userProfile.email}</p>
+                </div>
+                
+                <div className="py-1">
+                  <Link
+                    href="/settings"
+                    className="flex items-center gap-2 rounded-sm px-3 py-2 text-sm hover:bg-muted transition-colors"
+                    onClick={() => setShowUserMenu(false)}
+                  >
+                    <Settings className="h-4 w-4" />
+                    Settings
+                  </Link>
+                  
+                  <button
+                    onClick={handleLogout}
+                    className="flex w-full items-center gap-2 rounded-sm px-3 py-2 text-sm hover:bg-muted transition-colors text-destructive"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    Logout
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
-          
-          <div className="relative">
-            <Button variant="ghost" size="icon" className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200">
-              <User className="h-5 w-5 transition-colors duration-300" />
-            </Button>
-          </div>
-          
-          <Button variant="ghost" size="icon" className="hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 hover:text-red-500">
-            <LogOut className="h-5 w-5 transition-all duration-300" />
-          </Button>
         </div>
       </div>
     </header>

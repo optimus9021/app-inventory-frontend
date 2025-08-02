@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { Layout } from '@/components/layout/Layout';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -330,7 +329,7 @@ export default function NotificationsPage() {
   };
 
   return (
-    <Layout>
+    
       <div className="space-y-6">
         {/* Header */}
         <div className="flex justify-between items-center">
@@ -618,6 +617,6 @@ export default function NotificationsPage() {
           </div>
         </div>
       </div>
-    </Layout>
+    
   );
 }

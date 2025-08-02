@@ -93,4 +93,50 @@
   .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
     background: hsl(var(--muted-foreground) / 0.6);
   }
+
+  /* Ensure header buttons are clickable */
+  header button,
+  header div[role="button"] {
+    pointer-events: auto !important;
+    cursor: pointer !important;
+  }
+
+  /* Make icons NOT intercept clicks - let parent button handle them */
+  header button svg,
+  header button > svg,
+  header div[role="button"] svg,
+  header div[role="button"] > svg {
+    pointer-events: none !important;
+    cursor: pointer !important;
+  }
+
+  /* Debug mode - uncomment to see button boundaries */
+  /*
+  header button {
+    border: 1px solid red !important;
+    background: rgba(255, 0, 0, 0.1) !important;
+  }
+  header button svg {
+    border: 1px solid blue !important;
+    background: rgba(0, 0, 255, 0.1) !important;
+  }
+  */
+
+  /* Ensure all interactive elements in header are clickable */
+  header button,
+  header div[role="button"],
+  header a,
+  header input {
+    pointer-events: auto !important;
+  }
+
+  /* Fix for any overlay issues */
+  .fixed.z-50 {
+    pointer-events: auto;
+  }
+
+  /* Ensure header dropdowns are above everything */
+  header .absolute {
+    z-index: 90 !important;
+  }
 }
